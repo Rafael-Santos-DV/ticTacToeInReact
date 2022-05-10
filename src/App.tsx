@@ -1,8 +1,11 @@
 import React from 'react';
+import { Container, StylesGlobal } from './style/stylesGlobal';
 
 function App() {
   return (
-    <div className="App" style={{ border: '1px solid red', padding: '40px' }} />
+    <Container>
+      <StylesGlobal />
+    </Container>
   );
 }
 
