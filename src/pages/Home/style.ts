@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Colors from '../../style/colors';
 
 export const ContainerHome = styled.div`
   display: flex;
@@ -38,6 +39,44 @@ export const BoxLogin = styled.button`
   span {
     font-size: 16px;
   }
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+`;
+
+export const CardForm = styled.form`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  max-width: 250px;
+  background-color: ${Colors.white};
+  padding: 20px;
+  border-radius: 8px;
+  row-gap: 10px;
+  text-align: center;
+
+  input {
+    border-radius: 6px;
+    border: 1px solid ${Colors.backgroundMaster};
+    padding: 4px;
+  }
+`;
+
+type buttonFormType = {
+  active?: boolean;
+};
+
+export const ButtonForm = styled.button<buttonFormType>`
+  border-radius: 6px;
+  border: none;
+  background-color: ${(props) =>
+    props.active ? Colors.green : Colors.backgroundMaster};
+  color: ${Colors.white};
+  cursor: pointer;
+  padding: 4px;
+  margin-top: 3px;
+  transition: filter 200ms ease;
 
   &:hover {
     filter: brightness(0.9);

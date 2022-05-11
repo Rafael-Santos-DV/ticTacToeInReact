@@ -3,6 +3,7 @@ import { ButtonComponent } from './style';
 
 type ButtonTypes = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode;
+  createRoom?: boolean;
 };
 
 export const Button: React.FC<ButtonTypes> = ({ children, ...props }) => {
