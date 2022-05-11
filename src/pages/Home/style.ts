@@ -12,16 +12,17 @@ export const ContainerHome = styled.div`
 
   > img {
     width: 100%;
-    max-width: 520px;
+    max-width: 480px;
   }
 `;
 
 export const BoxLogin = styled.button`
-  width: 220px;
+  width: 100%;
+  max-width: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 15px;
+  border-radius: 10px;
   cursor: pointer;
   border: none;
   padding: 5px;
@@ -30,8 +31,8 @@ export const BoxLogin = styled.button`
   transition: filter 200ms ease;
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
   }
 
   span {

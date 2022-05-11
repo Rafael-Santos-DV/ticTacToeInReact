@@ -13,7 +13,7 @@ export const Home: React.FC = () => {
         <img src={google} alt="Google" />
         <span>Fazer Login</span>
       </BoxLogin>
-      <Button>Jogar</Button>
+      <Button type="button">Jogar</Button>
     </ContainerHome>
   );
 };
