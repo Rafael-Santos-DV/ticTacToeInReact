@@ -12,7 +12,7 @@ export const Home: React.FC = () => {
       <BoxLogin type="button">
         <img src={google} alt="Google" />
         <span>Fazer Login</span>
-        <Button>Jogar</Button>
+        {/* <Button>Jogar</Button> */}
       </BoxLogin>
     </ContainerHome>
   );
