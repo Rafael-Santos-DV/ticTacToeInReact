@@ -1,16 +1,20 @@
 import React, { useContext, useEffect, useState, FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BoxLogin, ButtonForm, CardForm, ContainerHome } from './style';
 
 import imageHome from '../../assets/image-old.svg';
 import google from '../../assets/google.png';
 import { Button } from '../../components/Button/Button';
 import { AuthContext } from '../../context/ContextAuth';
+import { database } from '../../services/firebase';
 
 export const Home: React.FC = () => {
   const { user, singInWithGoogle } = useContext(AuthContext);
   const [login, setLogin] = useState(false);
   const [card, setCard] = useState<'create' | 'singIn' | undefined>();
   const [nameOrCodRoom, setNameOrCodRoom] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -20,10 +24,60 @@ export const Home: React.FC = () => {
 
   async function handleCreateRoom(event: FormEvent) {
     event.preventDefault();
+
+    if (nameOrCodRoom.trim() === '') return;
+
+    const roomRefGame = database.ref('gameRooms');
+
+    const databaseRoomValue = await roomRefGame.push({
+      nameRoom: nameOrCodRoom.trim(),
+      author: {
+        user: user?.user,
+        id: user?.id,
+        avatar: user?.avatar,
+      },
+      anotations: {
+        jogadorInit: 'creator',
+        creator: {
+          user: user?.user,
+          avatar: user?.avatar,
+          id: user?.id,
+          wins: 0,
+          plays: '',
+        },
+        // quest: {
+        //   user: '',
+        //   avatar: '',
+        //   id: '',
+        //   wins: 0,
+        //   plays: [],
+        // },
+      },
+    });
+
+    navigate(`/game/${databaseRoomValue.key}`);
   }
 
   async function handleSignInRoom(event: FormEvent) {
     event.preventDefault();
+
+    if (nameOrCodRoom.trim() === '') return;
+
+    const roomRefGame = database.ref(`gameRooms/${nameOrCodRoom.trim()}`);
+    const result = await roomRefGame.get();
+    const anotationsResult = result.val().anotations;
+    anotationsResult.quest = {
+      user: user?.user,
+      avatar: user?.avatar,
+      id: user?.id,
+      wins: 0,
+      plays: '',
+    };
+
+    roomRefGame.update(anotationsResult);
+
+    // const databaseRoomValue = await roomRefGame.push(user);
+    // console.log(databaseRoomValue);
   }
 
   return (
