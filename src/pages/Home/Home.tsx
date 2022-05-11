@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, FormEvent } from 'react';
 import { BoxLogin, ButtonForm, CardForm, ContainerHome } from './style';
 
 import imageHome from '../../assets/image-old.svg';
@@ -10,12 +10,21 @@ export const Home: React.FC = () => {
   const { user, singInWithGoogle } = useContext(AuthContext);
   const [login, setLogin] = useState(false);
   const [card, setCard] = useState<'create' | 'singIn' | undefined>();
+  const [nameOrCodRoom, setNameOrCodRoom] = useState('');
 
   useEffect(() => {
     if (user) {
       setLogin(true);
     }
   }, [user]);
+
+  async function handleCreateRoom(event: FormEvent) {
+    event.preventDefault();
+  }
+
+  async function handleSignInRoom(event: FormEvent) {
+    event.preventDefault();
+  }
 
   return (
     <ContainerHome>
@@ -38,9 +47,13 @@ export const Home: React.FC = () => {
       )}
 
       {card === 'create' && (
-        <CardForm>
+        <CardForm onSubmit={handleCreateRoom}>
           <strong>Nome da sala</strong>
-          <input type="text" />
+          <input
+            type="text"
+            onChange={(e) => setNameOrCodRoom(e.target.value)}
+            value={nameOrCodRoom}
+          />
           <ButtonForm arial-aria-label="Criar sala" type="submit">
             Criar Sala
           </ButtonForm>
@@ -48,9 +61,13 @@ export const Home: React.FC = () => {
       )}
 
       {card === 'singIn' && (
-        <CardForm>
+        <CardForm onSubmit={handleSignInRoom}>
           <strong>Código da sala</strong>
-          <input type="text" />
+          <input
+            type="text"
+            onChange={(e) => setNameOrCodRoom(e.target.value)}
+            value={nameOrCodRoom}
+          />
           <ButtonForm arial-aria-label="Entrar na sala" type="submit" active>
             Entrar na sala
           </ButtonForm>
