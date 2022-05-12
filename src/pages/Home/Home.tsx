@@ -72,12 +72,6 @@ export const Home: React.FC = () => {
       const result = await roomRefGame.get();
       const anotationsResult = result.val();
 
-      if (anotationsResult.anotations.quest) {
-        // setError(true);
-        toast.error('Já existe dois jogadores na sala.');
-        return;
-      }
-
       const { anotations } = anotationsResult;
 
       if (anotations.creator.id === user?.id) {
@@ -89,6 +83,12 @@ export const Home: React.FC = () => {
         }, 2000);
 
         return () => clearTimeout(removeTime);
+      }
+
+      if (anotationsResult.anotations.quest) {
+        // setError(true);
+        toast.error('Já existe dois jogadores na sala.');
+        return;
       }
 
       const quest = {
@@ -107,6 +107,14 @@ export const Home: React.FC = () => {
       anotationsResult.anotations = newData;
 
       await roomRefGame.update(anotationsResult);
+
+      toast.success('Entrando na sala');
+      const removeTime = setTimeout(() => {
+        // setError(false);
+        navigate(`game/${result.key}`);
+      }, 2000);
+
+      return () => clearTimeout(removeTime);
     } catch (erro) {
       // setError(true);
       toast.error('Sala não existe!');
