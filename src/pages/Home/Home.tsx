@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState, FormEvent } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BoxLogin, ButtonForm, CardForm, ContainerHome } from './style';
 
 import imageHome from '../../assets/image-old.svg';
 import google from '../../assets/google.png';
 import { Button } from '../../components/Button/Button';
-import { AuthContext } from '../../context/ContextAuth';
 import { database } from '../../services/firebase';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Home: React.FC = () => {
-  const { user, singInWithGoogle } = useContext(AuthContext);
+  const { user, singInWithGoogle } = useAuth();
   const [login, setLogin] = useState(false);
   const [card, setCard] = useState<'create' | 'singIn' | undefined>();
   const [nameOrCodRoom, setNameOrCodRoom] = useState('');
@@ -65,8 +65,22 @@ export const Home: React.FC = () => {
 
     const roomRefGame = database.ref(`gameRooms/${nameOrCodRoom.trim()}`);
     const result = await roomRefGame.get();
-    const anotationsResult = result.val().anotations;
-    anotationsResult.quest = {
+    const anotationsResult = result.val();
+
+    if (anotationsResult.anotations.quest) {
+      window.alert('Já tem dois jogadores!');
+      return;
+    }
+
+    const { anotations } = anotationsResult;
+
+    if (anotations.creator.id === user?.id) {
+      window.alert('Entrando na sala...');
+      navigate(`game/${result.key}`);
+      return;
+    }
+
+    const quest = {
       user: user?.user,
       avatar: user?.avatar,
       id: user?.id,
@@ -74,10 +88,14 @@ export const Home: React.FC = () => {
       plays: '',
     };
 
-    roomRefGame.update(anotationsResult);
+    const newData = {
+      ...anotationsResult.anotations,
+      quest,
+    };
 
-    // const databaseRoomValue = await roomRefGame.push(user);
-    // console.log(databaseRoomValue);
+    anotationsResult.anotations = newData;
+
+    await roomRefGame.update(anotationsResult);
   }
 
   return (
