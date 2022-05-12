@@ -1,6 +1,9 @@
 import React, { useEffect, useState, FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import { BoxLogin, ButtonForm, CardForm, ContainerHome } from './style';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 import imageHome from '../../assets/image-old.svg';
 import google from '../../assets/google.png';
@@ -13,6 +16,7 @@ export const Home: React.FC = () => {
   const [login, setLogin] = useState(false);
   const [card, setCard] = useState<'create' | 'singIn' | undefined>();
   const [nameOrCodRoom, setNameOrCodRoom] = useState('');
+  // const [error, setError] = useState(false);
 
   const navigate = useNavigate();
 
@@ -63,39 +67,51 @@ export const Home: React.FC = () => {
 
     if (nameOrCodRoom.trim() === '') return;
 
-    const roomRefGame = database.ref(`gameRooms/${nameOrCodRoom.trim()}`);
-    const result = await roomRefGame.get();
-    const anotationsResult = result.val();
+    try {
+      const roomRefGame = database.ref(`gameRooms/${nameOrCodRoom.trim()}`);
+      const result = await roomRefGame.get();
+      const anotationsResult = result.val();
 
-    if (anotationsResult.anotations.quest) {
-      window.alert('Já tem dois jogadores!');
+      if (anotationsResult.anotations.quest) {
+        // setError(true);
+        toast.error('Já existe dois jogadores na sala.');
+        return;
+      }
+
+      const { anotations } = anotationsResult;
+
+      if (anotations.creator.id === user?.id) {
+        // setError(true);
+        toast.success('Entrando na sala');
+        const removeTime = setTimeout(() => {
+          // setError(false);
+          navigate(`game/${result.key}`);
+        }, 2000);
+
+        return () => clearTimeout(removeTime);
+      }
+
+      const quest = {
+        user: user?.user,
+        avatar: user?.avatar,
+        id: user?.id,
+        wins: 0,
+        plays: '',
+      };
+
+      const newData = {
+        ...anotationsResult.anotations,
+        quest,
+      };
+
+      anotationsResult.anotations = newData;
+
+      await roomRefGame.update(anotationsResult);
+    } catch (erro) {
+      // setError(true);
+      toast.error('Sala não existe!');
       return;
     }
-
-    const { anotations } = anotationsResult;
-
-    if (anotations.creator.id === user?.id) {
-      window.alert('Entrando na sala...');
-      navigate(`game/${result.key}`);
-      return;
-    }
-
-    const quest = {
-      user: user?.user,
-      avatar: user?.avatar,
-      id: user?.id,
-      wins: 0,
-      plays: '',
-    };
-
-    const newData = {
-      ...anotationsResult.anotations,
-      quest,
-    };
-
-    anotationsResult.anotations = newData;
-
-    await roomRefGame.update(anotationsResult);
   }
 
   return (
@@ -131,6 +147,8 @@ export const Home: React.FC = () => {
           </ButtonForm>
         </CardForm>
       )}
+
+      <ToastContainer autoClose={2000} />
 
       {card === 'singIn' && (
         <CardForm onSubmit={handleSignInRoom}>
