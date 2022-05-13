@@ -47,15 +47,8 @@ export const Home: React.FC = () => {
           avatar: user?.avatar,
           id: user?.id,
           wins: 0,
-          plays: '',
+          plays: ['init'],
         },
-        // quest: {
-        //   user: '',
-        //   avatar: '',
-        //   id: '',
-        //   wins: 0,
-        //   plays: [],
-        // },
       },
     });
 
@@ -70,7 +63,7 @@ export const Home: React.FC = () => {
     try {
       const roomRefGame = database.ref(`gameRooms/${nameOrCodRoom.trim()}`);
       const result = await roomRefGame.get();
-      const anotationsResult = result.val();
+      const anotationsResult = await result.val();
 
       const { anotations } = anotationsResult;
 
@@ -96,7 +89,7 @@ export const Home: React.FC = () => {
         avatar: user?.avatar,
         id: user?.id,
         wins: 0,
-        plays: '',
+        plays: ['init'],
       };
 
       const newData = {

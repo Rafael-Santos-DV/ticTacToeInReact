@@ -60,6 +60,7 @@ export const ContainerClicks = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 34px;
 
   button.down-room {
     background-color: #ff0000;
@@ -91,4 +92,53 @@ export const ContainerClicks = styled.div`
   }
 `;
 
-export const CardGame = styled.div``;
+export const CardGame = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 399px;
+  margin: 0 auto;
+  position: relative;
+`;
+
+export const ContainerFrameGreen = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+`;
+export const ContainerFrameWhite = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  justify-content: space-evenly;
+`;
+
+export const ImgFrame = styled.img``;
+
+export const BoxMatch = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  column-gap: 25px;
+`;
+
+export const Playes = styled.button`
+  color: red;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 20px 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+`;
