@@ -127,8 +127,8 @@ export const BoxMatch = styled.div`
   column-gap: 25px;
 `;
 
-export const Playes = styled.button`
-  color: red;
+export const Playes = styled.button<{ user: 'creator' | 'quest' }>`
+  color: ${(props) => (props.user === 'creator' ? Colors.green : '#ff0000')};
   font-size: 30px;
   cursor: pointer;
   padding: 20px 0;

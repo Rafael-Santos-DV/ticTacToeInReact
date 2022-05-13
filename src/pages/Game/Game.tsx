@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 import { BoxUser } from '../../components/BoxUser/BoxUser';
 import { ButtonComponent } from '../../components/Button/style';
 import { useAuth } from '../../hooks/useAuth';
+import 'react-toastify/dist/ReactToastify.css';
 
 import copy from '../../assets/copy.svg';
 import frameGreen from '../../assets/frame-green.svg';
@@ -110,7 +112,7 @@ export const Game: React.FC = () => {
       const { jogadorInit } = values.anotations;
 
       if (jogadorInit !== user?.id) {
-        alert('não é sua vez');
+        toast.error('Não é sua vez!');
         return;
       }
 
@@ -125,7 +127,7 @@ export const Game: React.FC = () => {
 
       if (verifyArrayCreatorAndQuest) {
         console.log(verifyArrayCreatorAndQuest);
-        window.alert('ja existe');
+        toast.warn('Já existe!');
         return;
       }
 
@@ -143,7 +145,7 @@ export const Game: React.FC = () => {
       const { jogadorInit } = values.anotations;
 
       if (jogadorInit !== user?.id) {
-        alert('não é sua vez');
+        toast.error('Não é sua vez!');
         return;
       }
 
@@ -158,7 +160,7 @@ export const Game: React.FC = () => {
 
       if (verifyArrayCreatorAndQuest) {
         console.log(verifyArrayCreatorAndQuest);
-        window.alert('ja existe');
+        toast.warn('Já existe!');
         return;
       }
 
@@ -174,18 +176,28 @@ export const Game: React.FC = () => {
     <div className="container-master">
       <ContainerGamer>
         <ContainerScore>
-          <BoxUser src={user?.avatar} name={user?.user} match="X" player={1} />
+          <BoxUser
+            src={data?.anotations.creator.avatar}
+            name={data?.anotations.creator.user}
+            match="X"
+            player={1}
+          />
 
           <Score>
             <div>
-              <span>1</span>
+              <span>{data?.anotations.creator.wins}</span>
               <span className="wins">Vitórias</span>
-              <span>1</span>
+              <span>{data?.anotations.quest.wins}</span>
             </div>
             <strong>vs</strong>
           </Score>
 
-          <BoxUser src={user?.avatar} name={user?.user} match="O" player={2} />
+          <BoxUser
+            src={data?.anotations.quest.avatar}
+            name={data?.anotations.quest.user}
+            match="O"
+            player={2}
+          />
         </ContainerScore>
 
         <ContainerClicks>
@@ -193,7 +205,7 @@ export const Game: React.FC = () => {
           <ButtonComponent className="copy">
             <img src={copy} alt="copiar" />
             <div>
-              SALA # <span>codigo</span>
+              SALA # <span>{params.id}</span>
             </div>
           </ButtonComponent>
           <ButtonComponent className="game-again">
@@ -203,13 +215,13 @@ export const Game: React.FC = () => {
 
         <CardGame>
           <ContainerFrameGreen>
-            <ImgFrame src={frameGreen} alt="" />
-            <ImgFrame src={frameGreen} alt="" />
+            <ImgFrame src={frameGreen} alt="frame green horizontal" />
+            <ImgFrame src={frameGreen} alt="frame green horizontal" />
           </ContainerFrameGreen>
 
           <ContainerFrameWhite>
-            <ImgFrame src={frameWhite} alt="" />
-            <ImgFrame src={frameWhite} alt="" />
+            <ImgFrame src={frameWhite} alt="frame white vertical" />
+            <ImgFrame src={frameWhite} alt="frame white vertical" />
           </ContainerFrameWhite>
 
           <BoxMatch>
@@ -217,6 +229,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('one', user?.id)}
               key="one"
+              user={dataMatch.one === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.one}
             </Playes>
@@ -224,6 +237,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('two', user?.id)}
               key="two"
+              user={dataMatch.two === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.two}
             </Playes>
@@ -231,6 +245,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('three', user?.id)}
               key="three"
+              user={dataMatch.three === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.three}
             </Playes>
@@ -238,6 +253,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('four', user?.id)}
               key="four"
+              user={dataMatch.four === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.four}
             </Playes>
@@ -245,6 +261,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('five', user?.id)}
               key="five"
+              user={dataMatch.five === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.five}
             </Playes>
@@ -252,6 +269,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('six', user?.id)}
               key="six"
+              user={dataMatch.six === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.six}
             </Playes>
@@ -259,6 +277,7 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('seven', user?.id)}
               key="seven"
+              user={dataMatch.seven === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.seven}
             </Playes>
@@ -266,18 +285,21 @@ export const Game: React.FC = () => {
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('eigth', user?.id)}
               key="eigth"
+              user={dataMatch.eigth === 'X' ? 'creator' : 'quest'}
             >
               {dataMatch.eigth}
             </Playes>
             <Playes
               aria-label="Jogada do usuário"
               onClick={() => handlePlayesOfUser('nine', user?.id)}
+              user={dataMatch.nine === 'X' ? 'creator' : 'quest'}
               key="nine"
             >
               {dataMatch.nine}
             </Playes>
           </BoxMatch>
         </CardGame>
+        <ToastContainer autoClose={1000} />
       </ContainerGamer>
     </div>
   );
