@@ -92,12 +92,32 @@ export const ContainerClicks = styled.div`
   }
 `;
 
-export const CardGame = styled.div`
+export const CardGame = styled.div<{
+  status: 'loss' | 'win' | 'draw' | 'normal';
+}>`
   display: flex;
   flex-direction: column;
   width: 399px;
   margin: 0 auto;
   position: relative;
+
+  ${(props) =>
+    props.status === 'win' &&
+    css`
+      filter: brightness(0.4);
+    `}
+
+  ${(props) =>
+    props.status === 'draw' &&
+    css`
+      filter: brightness(0.4);
+    `}
+
+  ${(props) =>
+    props.status === 'loss' &&
+    css`
+      filter: brightness(0.4);
+    `}
 `;
 
 export const ContainerFrameGreen = styled.div`
@@ -315,4 +335,10 @@ export const BoxFrameLine = styled.div<FrameLine>`
   img {
     width: 100%;
   }
+`;
+
+export const CardStatus = styled.div`
+  position: absolute;
+  /* filter: brightness(1); */
+  color: green;
 `;

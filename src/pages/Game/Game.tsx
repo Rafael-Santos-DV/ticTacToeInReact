@@ -17,6 +17,7 @@ import {
   BoxFrameLine,
   BoxMatch,
   CardGame,
+  CardStatus,
   ContainerAwait,
   ContainerClicks,
   ContainerFrameGreen,
@@ -67,6 +68,17 @@ type TypeData = {
   };
 };
 
+type LineWin =
+  | 'h-top'
+  | 'h-center'
+  | 'h-bottom'
+  | 'v-left'
+  | 'v-center'
+  | 'v-right'
+  | 'd-7and3'
+  | 'd-1and9'
+  | 'empate';
+
 export const Game: React.FC = () => {
   const { user, handleCacheSingInWithGoogle } = useAuth();
   const params = useParams();
@@ -74,6 +86,8 @@ export const Game: React.FC = () => {
   const [data, setData] = useState<TypeData>();
   const [fetchComponent, setComponent] = useState(false);
   const [awaitPlayer, setAwaitPlayer] = useState(true);
+  const [lineWin, setLineWin] = useState<LineWin>('empate');
+  const [stopButton, setStopButton] = useState(false);
 
   const [dataMatch, setMatch] = useState<TypeMatchs>({
     one: '',
@@ -91,6 +105,11 @@ export const Game: React.FC = () => {
     toast.loading('Carregando...', { position: 'top-center' });
     const roomRef = database.ref(`gameRooms/${params.id}`);
     roomRef.on('value', async (roomValues) => {
+      // esquema de win
+      // diagonal: 1 - 5 - 9  ----- 7 - 5 - 3
+      // vertical: 1 - 4 - 7 ----- 2 - 5 - 8 ---- 3 - 6 - 9
+      // horizontal: 1 - 2 - 3 ----- 4 - 5 - 6 ---- 7 - 8 - 9
+
       const result: TypeData = await roomValues.val();
       const { creator, quest } = result.anotations;
 
@@ -128,6 +147,80 @@ export const Game: React.FC = () => {
     };
   }, [params.id]);
 
+  function handleVerifyWinner(Plays: Array<string>): boolean {
+    const horizontalTop =
+      Plays.includes('one') && Plays.includes('two') && Plays.includes('three');
+
+    const horizontalCenter =
+      Plays.includes('four') && Plays.includes('five') && Plays.includes('six');
+
+    const horizontalBottom =
+      Plays.includes('seven') &&
+      Plays.includes('eigth') &&
+      Plays.includes('nine');
+
+    // diagonal
+    const diagonalOneToNine =
+      Plays.includes('one') && Plays.includes('five') && Plays.includes('nine');
+
+    const diagonalSevenToThree =
+      Plays.includes('seven') &&
+      Plays.includes('five') &&
+      Plays.includes('three');
+
+    const verticalLeft =
+      Plays.includes('one') &&
+      Plays.includes('four') &&
+      Plays.includes('seven');
+
+    const verticalCenter =
+      Plays.includes('two') &&
+      Plays.includes('five') &&
+      Plays.includes('eigth');
+
+    const verticalRight =
+      Plays.includes('three') &&
+      Plays.includes('six') &&
+      Plays.includes('nine');
+
+    if (horizontalTop) {
+      setLineWin('h-top');
+      setStopButton(true);
+    } else if (horizontalBottom) {
+      setLineWin('h-bottom');
+      setStopButton(true);
+    } else if (horizontalCenter) {
+      setLineWin('h-center');
+      setStopButton(true);
+    } else if (verticalLeft) {
+      setLineWin('v-left');
+      setStopButton(true);
+    } else if (verticalCenter) {
+      setLineWin('v-center');
+      setStopButton(true);
+    } else if (verticalRight) {
+      setLineWin('v-right');
+      setStopButton(true);
+    } else if (diagonalOneToNine) {
+      setLineWin('d-1and9');
+      setStopButton(true);
+    } else if (diagonalSevenToThree) {
+      setLineWin('d-7and3');
+      setStopButton(true);
+    }
+
+    return (
+      horizontalTop ||
+      horizontalCenter ||
+      horizontalBottom ||
+      diagonalOneToNine ||
+      diagonalSevenToThree ||
+      verticalLeft ||
+      verticalCenter ||
+      verticalRight
+    );
+  }
+
   async function handlePlayesOfUser(match: string, userId?: string) {
     const roomRef = database.ref(`gameRooms/${params.id}`);
     const response = await roomRef.get();
@@ -164,7 +257,11 @@ export const Game: React.FC = () => {
         return;
       }
 
+      // win for creator
+
       PlaysCreator.push(match);
+      const res = handleVerifyWinner(PlaysCreator);
+      if (res) alert('voce venceu!');
       values.anotations.jogadorInit = values.anotations.quest.id;
       values.anotations.creator.plays = PlaysCreator;
       await roomRef.update(values);
@@ -197,6 +294,8 @@ export const Game: React.FC = () => {
       }
 
       PlaysQuest.push(match);
+      const res = handleVerifyWinner(PlaysQuest);
+      if (res) alert('voce venceu!');
       values.anotations.jogadorInit = values.anotations.creator.id;
       values.anotations.quest.plays = PlaysQuest;
       await roomRef.update(values);
@@ -253,7 +352,7 @@ export const Game: React.FC = () => {
               <img src={awaitImage} alt="Esperando por jogador" />
             </ContainerAwait>
           ) : (
-            <CardGame>
+            <CardGame status="normal">
               <ContainerFrameGreen>
                 <ImgFrame src={frameGreen} alt="frame green horizontal" />
                 <ImgFrame src={frameGreen} alt="frame green horizontal" />
@@ -270,6 +369,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('one', user?.id)}
                   key="one"
                   user={dataMatch.one === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.one}
                 </Playes>
@@ -278,6 +378,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('two', user?.id)}
                   key="two"
                   user={dataMatch.two === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.two}
                 </Playes>
@@ -286,6 +387,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('three', user?.id)}
                   key="three"
                   user={dataMatch.three === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.three}
                 </Playes>
@@ -294,6 +396,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('four', user?.id)}
                   key="four"
                   user={dataMatch.four === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.four}
                 </Playes>
@@ -302,6 +405,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('five', user?.id)}
                   key="five"
                   user={dataMatch.five === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.five}
                 </Playes>
@@ -310,6 +414,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('six', user?.id)}
                   key="six"
                   user={dataMatch.six === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.six}
                 </Playes>
@@ -318,6 +423,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('seven', user?.id)}
                   key="seven"
                   user={dataMatch.seven === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.seven}
                 </Playes>
@@ -326,6 +432,7 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('eigth', user?.id)}
                   key="eigth"
                   user={dataMatch.eigth === 'X' ? 'creator' : 'quest'}
+                  disabled={stopButton}
                 >
                   {dataMatch.eigth}
                 </Playes>
@@ -334,12 +441,13 @@ export const Game: React.FC = () => {
                   onClick={() => handlePlayesOfUser('nine', user?.id)}
                   user={dataMatch.nine === 'X' ? 'creator' : 'quest'}
                   key="nine"
+                  disabled={stopButton}
                 >
                   {dataMatch.nine}
                 </Playes>
               </BoxMatch>
 
-              <BoxFrameLine position="empate">
+              <BoxFrameLine position={lineWin}>
                 <img className="frame-line" src={frameLine} alt="Frame win" />
                 <img
                   className="frame-vertical"
@@ -347,6 +455,10 @@ export const Game: React.FC = () => {
                   alt="Frame vertical"
                 />
               </BoxFrameLine>
+
+              <CardStatus>
+                <span>Você venceu!</span>
+              </CardStatus>
             </CardGame>
           )}
 
