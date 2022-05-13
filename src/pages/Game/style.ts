@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Colors from '../../style/colors';
 
 export const ContainerGamer = styled.div`
@@ -141,4 +141,178 @@ export const Playes = styled.button<{ user: 'creator' | 'quest' }>`
   -webkit-appearance: none;
   background: transparent;
   border: none;
+`;
+
+export const ContainerAwait = styled.div`
+  margin: 0 auto;
+  padding: 0 20px;
+`;
+
+type FrameLine = {
+  position:
+    | 'h-top'
+    | 'h-center'
+    | 'h-bottom'
+    | 'v-left'
+    | 'v-center'
+    | 'v-right'
+    | 'd-7and3'
+    | 'd-1and9'
+    | 'empate';
+};
+
+export const BoxFrameLine = styled.div<FrameLine>`
+  position: absolute;
+  height: 100%;
+  width: 100%;
+
+  img.frame-vertical {
+    display: none;
+  }
+
+  ${(props) =>
+    props.position === 'h-center' &&
+    css`
+      display: grid;
+      justify-content: center;
+      align-items: center;
+    `}
+
+  ${(props) =>
+    props.position === 'h-top' &&
+    css`
+      display: grid;
+      grid-template-rows: repeat(3, 1fr);
+      justify-content: space-around;
+      align-items: center;
+    `}
+
+    ${(props) =>
+    props.position === 'h-bottom' &&
+    css`
+      display: grid;
+      justify-content: space-around;
+
+      align-items: center;
+      row-gap: 10px;
+
+      &::before {
+        content: '';
+      }
+      &::after {
+        content: '';
+      }
+
+      > img {
+        order: 3;
+      }
+    `}
+
+    ${(props) =>
+    props.position === 'd-1and9' &&
+    css`
+      display: block;
+
+      img {
+        transform: rotate(40deg) translate(94px, 120px);
+      }
+    `}
+
+
+    ${(props) =>
+    props.position === 'd-7and3' &&
+    css`
+      display: block;
+
+      img {
+        transform: rotate(142deg) translate(94px, -120px);
+      }
+    `}
+
+    ${(props) =>
+    props.position === 'v-center' &&
+    css`
+      display: flex;
+
+      > img.frame-line {
+        display: none;
+      }
+
+      > img.frame-vertical {
+        display: block;
+        width: 100%;
+      }
+    `}
+
+    ${(props) =>
+    props.position === 'v-left' &&
+    css`
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid red;
+
+      &::before {
+        content: 'a';
+        order: 3;
+      }
+      &::after {
+        content: 'a';
+        order: 2;
+      }
+
+      > img.frame-line {
+        display: none;
+      }
+
+      > img.frame-vertical {
+        width: 10px;
+        display: inline-block;
+        margin: 0 auto;
+        order: 1;
+        transform: translate(-10px, -24px);
+      }
+    `}
+
+    ${(props) =>
+    props.position === 'v-right' &&
+    css`
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid red;
+
+      &::before {
+        content: 'a';
+        order: 1;
+      }
+      &::after {
+        content: 'a';
+        order: 2;
+      }
+
+      > img.frame-line {
+        display: none;
+      }
+
+      > img.frame-vertical {
+        width: 10px;
+        display: inline-block;
+        margin: 0 auto;
+        order: 3;
+        transform: translate(10px, -24px);
+      }
+    `}
+    ${(props) =>
+    props.position === 'empate' &&
+    css`
+      display: none;
+    `}
+
+
+  img {
+    width: 100%;
+  }
 `;

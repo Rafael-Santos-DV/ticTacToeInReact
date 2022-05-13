@@ -9,10 +9,15 @@ import 'react-toastify/dist/ReactToastify.css';
 import copy from '../../assets/copy.svg';
 import frameGreen from '../../assets/frame-green.svg';
 import frameWhite from '../../assets/frame-white.svg';
+import awaitImage from '../../assets/await-for-player.svg';
+import frameLine from '../../assets/frame-line.svg';
+import frameVertical from '../../assets/frame-vertical.svg';
 
 import {
+  BoxFrameLine,
   BoxMatch,
   CardGame,
+  ContainerAwait,
   ContainerClicks,
   ContainerFrameGreen,
   ContainerFrameWhite,
@@ -68,6 +73,7 @@ export const Game: React.FC = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<TypeData>();
   const [fetchComponent, setComponent] = useState(false);
+  const [awaitPlayer, setAwaitPlayer] = useState(true);
 
   const [dataMatch, setMatch] = useState<TypeMatchs>({
     one: '',
@@ -87,6 +93,10 @@ export const Game: React.FC = () => {
     roomRef.on('value', async (roomValues) => {
       const result: TypeData = await roomValues.val();
       const { creator, quest } = result.anotations;
+
+      if (quest.id) {
+        setAwaitPlayer(false);
+      }
 
       if (!user) {
         const response = await handleCacheSingInWithGoogle();
@@ -238,93 +248,108 @@ export const Game: React.FC = () => {
               Jogar Novamente
             </ButtonComponent>
           </ContainerClicks>
+          {awaitPlayer ? (
+            <ContainerAwait>
+              <img src={awaitImage} alt="Esperando por jogador" />
+            </ContainerAwait>
+          ) : (
+            <CardGame>
+              <ContainerFrameGreen>
+                <ImgFrame src={frameGreen} alt="frame green horizontal" />
+                <ImgFrame src={frameGreen} alt="frame green horizontal" />
+              </ContainerFrameGreen>
 
-          <CardGame>
-            <ContainerFrameGreen>
-              <ImgFrame src={frameGreen} alt="frame green horizontal" />
-              <ImgFrame src={frameGreen} alt="frame green horizontal" />
-            </ContainerFrameGreen>
+              <ContainerFrameWhite>
+                <ImgFrame src={frameWhite} alt="frame white vertical" />
+                <ImgFrame src={frameWhite} alt="frame white vertical" />
+              </ContainerFrameWhite>
 
-            <ContainerFrameWhite>
-              <ImgFrame src={frameWhite} alt="frame white vertical" />
-              <ImgFrame src={frameWhite} alt="frame white vertical" />
-            </ContainerFrameWhite>
+              <BoxMatch>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('one', user?.id)}
+                  key="one"
+                  user={dataMatch.one === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.one}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('two', user?.id)}
+                  key="two"
+                  user={dataMatch.two === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.two}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('three', user?.id)}
+                  key="three"
+                  user={dataMatch.three === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.three}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('four', user?.id)}
+                  key="four"
+                  user={dataMatch.four === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.four}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('five', user?.id)}
+                  key="five"
+                  user={dataMatch.five === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.five}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('six', user?.id)}
+                  key="six"
+                  user={dataMatch.six === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.six}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('seven', user?.id)}
+                  key="seven"
+                  user={dataMatch.seven === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.seven}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('eigth', user?.id)}
+                  key="eigth"
+                  user={dataMatch.eigth === 'X' ? 'creator' : 'quest'}
+                >
+                  {dataMatch.eigth}
+                </Playes>
+                <Playes
+                  aria-label="Jogada do usuário"
+                  onClick={() => handlePlayesOfUser('nine', user?.id)}
+                  user={dataMatch.nine === 'X' ? 'creator' : 'quest'}
+                  key="nine"
+                >
+                  {dataMatch.nine}
+                </Playes>
+              </BoxMatch>
 
-            <BoxMatch>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('one', user?.id)}
-                key="one"
-                user={dataMatch.one === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.one}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('two', user?.id)}
-                key="two"
-                user={dataMatch.two === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.two}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('three', user?.id)}
-                key="three"
-                user={dataMatch.three === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.three}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('four', user?.id)}
-                key="four"
-                user={dataMatch.four === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.four}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('five', user?.id)}
-                key="five"
-                user={dataMatch.five === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.five}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('six', user?.id)}
-                key="six"
-                user={dataMatch.six === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.six}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('seven', user?.id)}
-                key="seven"
-                user={dataMatch.seven === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.seven}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('eigth', user?.id)}
-                key="eigth"
-                user={dataMatch.eigth === 'X' ? 'creator' : 'quest'}
-              >
-                {dataMatch.eigth}
-              </Playes>
-              <Playes
-                aria-label="Jogada do usuário"
-                onClick={() => handlePlayesOfUser('nine', user?.id)}
-                user={dataMatch.nine === 'X' ? 'creator' : 'quest'}
-                key="nine"
-              >
-                {dataMatch.nine}
-              </Playes>
-            </BoxMatch>
-          </CardGame>
+              <BoxFrameLine position="empate">
+                <img className="frame-line" src={frameLine} alt="Frame win" />
+                <img
+                  className="frame-vertical"
+                  src={frameVertical}
+                  alt="Frame vertical"
+                />
+              </BoxFrameLine>
+            </CardGame>
+          )}
+
           <ToastContainer autoClose={1000} />
         </ContainerGamer>
       )}
