@@ -10,6 +10,7 @@ type UserType = {
 type AuthContextType = {
   user: UserType | undefined;
   singInWithGoogle: () => Promise<void>;
+  handleCacheSingInWithGoogle: () => Promise<UserType>;
 };
 
 type AuthContextPriverProps = {
@@ -60,8 +61,34 @@ export function AuthContextProvider(props: AuthContextPriverProps) {
     }
   }
 
+  async function handleCacheSingInWithGoogle() {
+    const User: UserType = {
+      avatar: '',
+      id: '',
+      user: '',
+    };
+    const onsubscribe = auth.onAuthStateChanged((dataUser) => {
+      if (dataUser) {
+        const { displayName, uid, photoURL } = dataUser;
+
+        if (!displayName || !photoURL) {
+          throw new Error(`Missing information from Google Acount.`);
+        }
+        User.avatar = photoURL;
+        User.id = uid;
+        User.user = displayName;
+      }
+    });
+
+    onsubscribe();
+
+    return User;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, singInWithGoogle }}>
+    <AuthContext.Provider
+      value={{ user, singInWithGoogle, handleCacheSingInWithGoogle }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

@@ -41,11 +41,18 @@ export const Home: React.FC = () => {
         avatar: user?.avatar,
       },
       anotations: {
-        jogadorInit: 'creator',
+        jogadorInit: user?.id,
         creator: {
           user: user?.user,
           avatar: user?.avatar,
           id: user?.id,
+          wins: 0,
+          plays: ['init'],
+        },
+        quest: {
+          user: '',
+          avatar: '',
+          id: '',
           wins: 0,
           plays: ['init'],
         },
@@ -78,7 +85,7 @@ export const Home: React.FC = () => {
         return () => clearTimeout(removeTime);
       }
 
-      if (anotationsResult.anotations.quest) {
+      if (anotationsResult.anotations.quest.id) {
         // setError(true);
         toast.error('Já existe dois jogadores na sala.');
         return;

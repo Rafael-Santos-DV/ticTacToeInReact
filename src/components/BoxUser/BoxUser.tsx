@@ -17,9 +17,9 @@ export const BoxUser: React.FC<TypeBoxUser> = ({
   <BoxUserComponent>
     <span>Player: {player}</span>
     <div>
-      <Img src={src} alt={name} />
+      {src?.trim() ? <Img src={src} alt={name} /> : <div />}
       <strong className={`${player === 1 ? 'creator' : 'quest'}`}>
-        {name}
+        {name || 'Nenhum jogador'}
       </strong>
       <span className="match">{match}</span>
     </div>

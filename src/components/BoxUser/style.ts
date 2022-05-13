@@ -17,6 +17,13 @@ export const BoxUserComponent = styled.div`
     column-gap: 15px;
     align-items: center;
 
+    div {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+
     strong.creator {
       color: ${Colors.green};
     }
@@ -39,4 +46,5 @@ export const Img = styled.img`
   width: 35px;
   height: 35px;
   border-radius: 50%;
+  background-color: #ccc;
 `;
