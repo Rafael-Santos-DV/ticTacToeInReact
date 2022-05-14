@@ -61,6 +61,7 @@ type TypeData = {
   };
   nameRoom: string;
   anotations: {
+    restart: boolean;
     winner: string;
     jogadorInit: string;
     line: LineWin | undefined;
@@ -111,13 +112,39 @@ export const Game: React.FC = () => {
   useEffect(() => {
     toast.loading('Carregando...', { position: 'top-center' });
     const roomRef = database.ref(`gameRooms/${params.id}`);
+
     roomRef.on('value', async (roomValues) => {
+      const exists = await roomRef.get();
+
+      if (!exists.exists()) {
+        navigate('/');
+        return;
+      }
+
       // esquema de win
       // diagonal: 1 - 5 - 9  ----- 7 - 5 - 3
       // vertical: 1 - 4 - 7 ----- 2 - 5 - 8 ---- 3 - 6 - 9
       // horizontal: 1 - 2 - 3 ----- 4 - 5 - 6 ---- 7 - 8 - 9
 
       const result: TypeData = await roomValues.val();
+
+      if (result.anotations.restart) {
+        setMatch({
+          one: '',
+          two: '',
+          three: '',
+          four: '',
+          five: '',
+          six: '',
+          seven: '',
+          eigth: '',
+          nine: '',
+        });
+        setLineCard('empate');
+        setGameStatus('normal');
+        setStopButton(false);
+      }
+
       const { creator, quest } = result.anotations;
       const { winner } = result.anotations;
 
@@ -249,7 +276,7 @@ export const Game: React.FC = () => {
       statusAndLine.line = 'd-1and9';
       setStopButton(true);
     } else if (diagonalSevenToThree) {
-      // setLineWin('d-7and3');
+      // setLineWin('d-7and3');add
       statusAndLine.line = 'd-7and3';
       setStopButton(true);
     }
@@ -314,9 +341,11 @@ export const Game: React.FC = () => {
         values.anotations.winner = user.id;
         values.anotations.line = resultWinner.line;
         values.anotations.creator.wins += 1;
+        values.anotations.jogadorInit = values.anotations.creator.id;
+      } else {
+        values.anotations.jogadorInit = values.anotations.quest.id;
       }
 
-      values.anotations.jogadorInit = values.anotations.quest.id;
       values.anotations.creator.plays = PlaysCreator;
       await roomRef.update(values);
       setMatch((value) => ({ ...value, [match]: 'X' }));
@@ -355,13 +384,42 @@ export const Game: React.FC = () => {
         values.anotations.winner = user.id;
         values.anotations.line = resultWinner.line;
         values.anotations.quest.wins += 1;
+        values.anotations.jogadorInit = values.anotations.quest.id;
+      } else {
+        values.anotations.jogadorInit = values.anotations.creator.id;
       }
 
-      values.anotations.jogadorInit = values.anotations.creator.id;
       values.anotations.quest.plays = PlaysQuest;
       await roomRef.update(values);
       setMatch((value) => ({ ...value, [match]: 'O' }));
     }
+  }
+
+  async function handleRestartGame(userId?: string) {
+    const roomRef = database.ref(`gameRooms/${params.id}`);
+    const dataGame: TypeData = await (await roomRef.get()).val();
+    const { creator } = dataGame.anotations;
+
+    if (creator.id !== userId) return;
+
+    dataGame.anotations.line = 'empate';
+    dataGame.anotations.winner = 'none';
+    dataGame.anotations.creator.plays = ['init'];
+    dataGame.anotations.quest.plays = ['init'];
+    dataGame.anotations.restart = true;
+
+    await roomRef.update(dataGame);
+  }
+
+  async function handleEndRoom(userId?: string) {
+    const roomRef = database.ref(`gameRooms/${params.id}`);
+    const { id } = await (await roomRef.get()).val().author;
+    if (userId === id) {
+      await roomRef.remove();
+      return;
+    }
+    toast.warn('Você não pode deletar essa sala');
+    return;
   }
 
   return (
@@ -395,16 +453,27 @@ export const Game: React.FC = () => {
           </ContainerScore>
 
           <ContainerClicks>
-            <ButtonComponent className="down-room">
+            <ButtonComponent
+              className="down-room"
+              onClick={() => handleEndRoom(user?.id)}
+            >
               Encerrar sala
             </ButtonComponent>
-            <ButtonComponent className="copy">
+            <ButtonComponent
+              className="copy"
+              onClick={() =>
+                window.navigator.clipboard.writeText(params.id ?? '')
+              }
+            >
               <img src={copy} alt="copiar" />
               <div>
                 SALA # <span>{params.id}</span>
               </div>
             </ButtonComponent>
-            <ButtonComponent className="game-again">
+            <ButtonComponent
+              className="game-again"
+              onClick={() => handleRestartGame(user?.id)}
+            >
               Jogar Novamente
             </ButtonComponent>
           </ContainerClicks>

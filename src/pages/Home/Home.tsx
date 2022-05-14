@@ -41,6 +41,7 @@ export const Home: React.FC = () => {
         avatar: user?.avatar,
       },
       anotations: {
+        restart: false,
         winner: 'none',
         line: 'empate',
         jogadorInit: user?.id,
