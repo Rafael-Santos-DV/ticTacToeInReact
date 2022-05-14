@@ -11,6 +11,7 @@ type AuthContextType = {
   user: UserType | undefined;
   singInWithGoogle: () => Promise<void>;
   handleCacheSingInWithGoogle: () => Promise<UserType>;
+  setUser: React.Dispatch<React.SetStateAction<UserType | undefined>>;
 };
 
 type AuthContextPriverProps = {
@@ -87,7 +88,7 @@ export function AuthContextProvider(props: AuthContextPriverProps) {
 
   return (
     <AuthContext.Provider
-      value={{ user, singInWithGoogle, handleCacheSingInWithGoogle }}
+      value={{ user, singInWithGoogle, handleCacheSingInWithGoogle, setUser }}
     >
       {props.children}
     </AuthContext.Provider>

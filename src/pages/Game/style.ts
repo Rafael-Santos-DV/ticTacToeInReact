@@ -92,9 +92,11 @@ export const ContainerClicks = styled.div`
   }
 `;
 
-export const CardGame = styled.div<{
+type TypeCardStatus = {
   status: 'loss' | 'win' | 'draw' | 'normal';
-}>`
+};
+
+export const CardGame = styled.div<TypeCardStatus>`
   display: flex;
   flex-direction: column;
   width: 399px;
@@ -102,21 +104,41 @@ export const CardGame = styled.div<{
   position: relative;
 
   ${(props) =>
-    props.status === 'win' &&
+    (props.status === 'win' ||
+      props.status === 'draw' ||
+      props.status === 'loss') &&
     css`
-      filter: brightness(0.4);
+      & .filter-active {
+        filter: contrast(0.1);
+      }
+
+      & .card-status {
+        color: #42f563;
+      }
     `}
 
   ${(props) =>
     props.status === 'draw' &&
     css`
-      filter: brightness(0.4);
+      & .filter-active {
+        filter: contrast(0.1);
+      }
+
+      & .card-status {
+        color: #5cd8fa;
+      }
     `}
 
   ${(props) =>
     props.status === 'loss' &&
     css`
-      filter: brightness(0.4);
+      & .filter-active {
+        filter: contrast(0.1);
+      }
+
+      & .card-status {
+        color: #fa2a05;
+      }
     `}
 `;
 
@@ -337,8 +359,28 @@ export const BoxFrameLine = styled.div<FrameLine>`
   }
 `;
 
-export const CardStatus = styled.div`
+export const CardStatus = styled.div<TypeCardStatus>`
   position: absolute;
-  /* filter: brightness(1); */
-  color: green;
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  z-index: 99;
+  background: transparent;
+  animation: animate-show 200ms linear;
+  color: ${(props) => props.status === 'draw' && '#5cd8fa'};
+  color: ${(props) => props.status === 'loss' && '#fa2a05'};
+  color: ${(props) => props.status === 'win' && '#42f563'};
+
+  @keyframes animate-show {
+    0% {
+      transform: translate(-30px, -50px);
+    }
+    100% {
+      transform: translate(0px, 0px);
+    }
+  }
 `;

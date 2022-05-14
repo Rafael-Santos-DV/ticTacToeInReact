@@ -41,6 +41,7 @@ export const Home: React.FC = () => {
         avatar: user?.avatar,
       },
       anotations: {
+        winner: 'none',
         jogadorInit: user?.id,
         creator: {
           user: user?.user,

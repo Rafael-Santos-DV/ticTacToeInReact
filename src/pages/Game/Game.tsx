@@ -50,6 +50,7 @@ type TypeData = {
   };
   nameRoom: string;
   anotations: {
+    winner: string;
     jogadorInit: string;
     creator: {
       user: string;
@@ -79,6 +80,8 @@ type LineWin =
   | 'd-1and9'
   | 'empate';
 
+type TypeCardStatus = 'loss' | 'win' | 'draw' | 'normal';
+
 export const Game: React.FC = () => {
   const { user, handleCacheSingInWithGoogle } = useAuth();
   const params = useParams();
@@ -88,6 +91,7 @@ export const Game: React.FC = () => {
   const [awaitPlayer, setAwaitPlayer] = useState(true);
   const [lineWin, setLineWin] = useState<LineWin>('empate');
   const [stopButton, setStopButton] = useState(false);
+  const [gameStatus, setGameStatus] = useState<TypeCardStatus>('normal');
 
   const [dataMatch, setMatch] = useState<TypeMatchs>({
     one: '',
@@ -112,6 +116,7 @@ export const Game: React.FC = () => {
 
       const result: TypeData = await roomValues.val();
       const { creator, quest } = result.anotations;
+      const { winner } = result.anotations;
 
       if (quest.id) {
         setAwaitPlayer(false);
@@ -124,10 +129,24 @@ export const Game: React.FC = () => {
           navigate('/');
           return;
         }
+
+        if (winner === response?.id) {
+          setGameStatus('win');
+        } else {
+          setGameStatus('loss');
+        }
       }
 
       setComponent(true);
       setData(result);
+
+      if (winner !== 'none' && user) {
+        if (winner === user.id) {
+          setGameStatus('win');
+        } else {
+          setGameStatus('loss');
+        }
+      }
 
       creator?.plays.forEach((key) => {
         if (key !== 'init') {
@@ -228,6 +247,8 @@ export const Game: React.FC = () => {
 
     // Creator
     if (data?.author.id === userId) {
+      if (stopButton) return;
+
       let { plays: PlaysCreator } = values.anotations.creator;
       const { plays: PlaysQuest } = values.anotations.quest;
       const { jogadorInit } = values.anotations;
@@ -260,8 +281,12 @@ export const Game: React.FC = () => {
       // win for creator
 
       PlaysCreator.push(match);
-      const res = handleVerifyWinner(PlaysCreator);
-      if (res) alert('voce venceu!');
+
+      const resultWinner = handleVerifyWinner(PlaysCreator);
+      if (resultWinner) {
+        values.anotations.winner = user.id;
+      }
+
       values.anotations.jogadorInit = values.anotations.quest.id;
       values.anotations.creator.plays = PlaysCreator;
       await roomRef.update(values);
@@ -269,6 +294,7 @@ export const Game: React.FC = () => {
 
       //
     } else {
+      if (stopButton) return;
       // Quest
       const { plays: PlaysCreator } = values.anotations.creator;
       let { plays: PlaysQuest } = values.anotations.quest;
@@ -294,8 +320,12 @@ export const Game: React.FC = () => {
       }
 
       PlaysQuest.push(match);
-      const res = handleVerifyWinner(PlaysQuest);
-      if (res) alert('voce venceu!');
+      const resultWinner = handleVerifyWinner(PlaysQuest);
+
+      if (resultWinner) {
+        values.anotations.winner = user.id;
+      }
+
       values.anotations.jogadorInit = values.anotations.creator.id;
       values.anotations.quest.plays = PlaysQuest;
       await roomRef.update(values);
@@ -352,18 +382,18 @@ export const Game: React.FC = () => {
               <img src={awaitImage} alt="Esperando por jogador" />
             </ContainerAwait>
           ) : (
-            <CardGame status="normal">
-              <ContainerFrameGreen>
+            <CardGame status={gameStatus}>
+              <ContainerFrameGreen className="filter-active">
                 <ImgFrame src={frameGreen} alt="frame green horizontal" />
                 <ImgFrame src={frameGreen} alt="frame green horizontal" />
               </ContainerFrameGreen>
 
-              <ContainerFrameWhite>
+              <ContainerFrameWhite className="filter-active">
                 <ImgFrame src={frameWhite} alt="frame white vertical" />
                 <ImgFrame src={frameWhite} alt="frame white vertical" />
               </ContainerFrameWhite>
 
-              <BoxMatch>
+              <BoxMatch className="filter-active">
                 <Playes
                   aria-label="Jogada do usuário"
                   onClick={() => handlePlayesOfUser('one', user?.id)}
@@ -447,7 +477,7 @@ export const Game: React.FC = () => {
                 </Playes>
               </BoxMatch>
 
-              <BoxFrameLine position={lineWin}>
+              <BoxFrameLine position={lineWin} className="filter-active">
                 <img className="frame-line" src={frameLine} alt="Frame win" />
                 <img
                   className="frame-vertical"
@@ -456,9 +486,13 @@ export const Game: React.FC = () => {
                 />
               </BoxFrameLine>
 
-              <CardStatus>
-                <span>Você venceu!</span>
-              </CardStatus>
+              {gameStatus !== 'normal' && (
+                <CardStatus className="card-status" status={gameStatus}>
+                  {gameStatus === 'win' && <span>Você venceu!</span>}
+                  {gameStatus === 'loss' && <span>Você perdeu!</span>}
+                  {gameStatus === 'draw' && <span>Deu empate!</span>}
+                </CardStatus>
+              )}
             </CardGame>
           )}
 
