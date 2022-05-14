@@ -191,7 +191,7 @@ export const ContainerAwait = styled.div`
 `;
 
 type FrameLine = {
-  position:
+  position?:
     | 'h-top'
     | 'h-center'
     | 'h-bottom'
@@ -293,7 +293,6 @@ export const BoxFrameLine = styled.div<FrameLine>`
       grid-template-columns: repeat(3, 1fr);
       justify-content: space-between;
       align-items: center;
-      border: 1px solid red;
 
       &::before {
         content: 'a';
@@ -324,7 +323,6 @@ export const BoxFrameLine = styled.div<FrameLine>`
       grid-template-columns: repeat(3, 1fr);
       justify-content: space-between;
       align-items: center;
-      border: 1px solid red;
 
       &::before {
         content: 'a';

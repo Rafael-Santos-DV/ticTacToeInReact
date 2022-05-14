@@ -42,6 +42,17 @@ type TypeMatchs = {
   nine: string;
 };
 
+type LineWin =
+  | 'h-top'
+  | 'h-center'
+  | 'h-bottom'
+  | 'v-left'
+  | 'v-center'
+  | 'v-right'
+  | 'd-7and3'
+  | 'd-1and9'
+  | 'empate';
+
 type TypeData = {
   author: {
     avatar: string;
@@ -52,6 +63,7 @@ type TypeData = {
   anotations: {
     winner: string;
     jogadorInit: string;
+    line: LineWin | undefined;
     creator: {
       user: string;
       id: string;
@@ -69,17 +81,6 @@ type TypeData = {
   };
 };
 
-type LineWin =
-  | 'h-top'
-  | 'h-center'
-  | 'h-bottom'
-  | 'v-left'
-  | 'v-center'
-  | 'v-right'
-  | 'd-7and3'
-  | 'd-1and9'
-  | 'empate';
-
 type TypeCardStatus = 'loss' | 'win' | 'draw' | 'normal';
 
 export const Game: React.FC = () => {
@@ -89,9 +90,11 @@ export const Game: React.FC = () => {
   const [data, setData] = useState<TypeData>();
   const [fetchComponent, setComponent] = useState(false);
   const [awaitPlayer, setAwaitPlayer] = useState(true);
-  const [lineWin, setLineWin] = useState<LineWin>('empate');
+  // const [lineWin, setLineWin] = useState<LineWin>('empate');
   const [stopButton, setStopButton] = useState(false);
   const [gameStatus, setGameStatus] = useState<TypeCardStatus>('normal');
+
+  const [lineCard, setLineCard] = useState<LineWin>();
 
   const [dataMatch, setMatch] = useState<TypeMatchs>({
     one: '',
@@ -130,20 +133,27 @@ export const Game: React.FC = () => {
           return;
         }
 
-        if (winner === response?.id) {
-          setGameStatus('win');
-        } else {
-          setGameStatus('loss');
+        if (winner !== 'none') {
+          if (winner === response?.id) {
+            setLineCard(result.anotations.line);
+            setGameStatus('win');
+          } else {
+            setLineCard(result.anotations.line);
+            setGameStatus('loss');
+          }
         }
       }
 
       setComponent(true);
       setData(result);
+      setLineCard(result.anotations.line);
 
       if (winner !== 'none' && user) {
         if (winner === user.id) {
+          setLineCard(result.anotations.line);
           setGameStatus('win');
         } else {
+          setLineCard(result.anotations.line);
           setGameStatus('loss');
         }
       }
@@ -166,7 +176,15 @@ export const Game: React.FC = () => {
     };
   }, [params.id]);
 
-  function handleVerifyWinner(Plays: Array<string>): boolean {
+  function handleVerifyWinner(Plays: Array<string>): {
+    status: boolean;
+    line: LineWin;
+  } {
+    const statusAndLine: { status: boolean; line: LineWin } = {
+      status: false,
+      line: 'empate',
+    };
+
     const horizontalTop =
       Plays.includes('one') && Plays.includes('two') && Plays.includes('three');
 
@@ -203,32 +221,40 @@ export const Game: React.FC = () => {
       Plays.includes('nine');
 
     if (horizontalTop) {
-      setLineWin('h-top');
+      // setLineWin('h-top');
+      statusAndLine.line = 'h-top';
       setStopButton(true);
     } else if (horizontalBottom) {
-      setLineWin('h-bottom');
+      // setLineWin('h-bottom');
+      statusAndLine.line = 'h-bottom';
       setStopButton(true);
     } else if (horizontalCenter) {
-      setLineWin('h-center');
+      // setLineWin('h-center');
+      statusAndLine.line = 'h-center';
       setStopButton(true);
     } else if (verticalLeft) {
-      setLineWin('v-left');
+      // setLineWin('v-left');
+      statusAndLine.line = 'v-left';
       setStopButton(true);
     } else if (verticalCenter) {
-      setLineWin('v-center');
+      // setLineWin('v-center');
+      statusAndLine.line = 'v-center';
       setStopButton(true);
     } else if (verticalRight) {
-      setLineWin('v-right');
+      // setLineWin('v-right');
+      statusAndLine.line = 'v-right';
       setStopButton(true);
     } else if (diagonalOneToNine) {
-      setLineWin('d-1and9');
+      // setLineWin('d-1and9');
+      statusAndLine.line = 'd-1and9';
       setStopButton(true);
     } else if (diagonalSevenToThree) {
-      setLineWin('d-7and3');
+      // setLineWin('d-7and3');
+      statusAndLine.line = 'd-7and3';
       setStopButton(true);
     }
 
-    return (
+    statusAndLine.status =
       horizontalTop ||
       horizontalCenter ||
       horizontalBottom ||
@@ -236,8 +262,9 @@ export const Game: React.FC = () => {
       diagonalSevenToThree ||
       verticalLeft ||
       verticalCenter ||
-      verticalRight
-    );
+      verticalRight;
+
+    return statusAndLine;
   }
 
   async function handlePlayesOfUser(match: string, userId?: string) {
@@ -283,8 +310,10 @@ export const Game: React.FC = () => {
       PlaysCreator.push(match);
 
       const resultWinner = handleVerifyWinner(PlaysCreator);
-      if (resultWinner) {
+      if (resultWinner.status) {
         values.anotations.winner = user.id;
+        values.anotations.line = resultWinner.line;
+        values.anotations.creator.wins += 1;
       }
 
       values.anotations.jogadorInit = values.anotations.quest.id;
@@ -322,8 +351,10 @@ export const Game: React.FC = () => {
       PlaysQuest.push(match);
       const resultWinner = handleVerifyWinner(PlaysQuest);
 
-      if (resultWinner) {
+      if (resultWinner.status) {
         values.anotations.winner = user.id;
+        values.anotations.line = resultWinner.line;
+        values.anotations.quest.wins += 1;
       }
 
       values.anotations.jogadorInit = values.anotations.creator.id;
@@ -477,7 +508,7 @@ export const Game: React.FC = () => {
                 </Playes>
               </BoxMatch>
 
-              <BoxFrameLine position={lineWin} className="filter-active">
+              <BoxFrameLine position={lineCard} className="filter-active">
                 <img className="frame-line" src={frameLine} alt="Frame win" />
                 <img
                   className="frame-vertical"
