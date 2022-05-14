@@ -382,3 +382,15 @@ export const CardStatus = styled.div<TypeCardStatus>`
     }
   }
 `;
+
+export const BoxTurn = styled.div<{ turn?: 'player1' | 'player2' }>`
+  display: flex;
+  column-gap: 5px;
+  color: #fff;
+  align-items: center;
+  strong {
+    color: ${(props) => (props.turn === 'player1' ? Colors.green : '#ff0000')};
+    letter-spacing: 1px;
+    font-size: 1.2rem;
+  }
+`;

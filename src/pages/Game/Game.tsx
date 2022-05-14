@@ -16,6 +16,7 @@ import frameVertical from '../../assets/frame-vertical.svg';
 import {
   BoxFrameLine,
   BoxMatch,
+  BoxTurn,
   CardGame,
   CardStatus,
   ContainerAwait,
@@ -94,6 +95,10 @@ export const Game: React.FC = () => {
   // const [lineWin, setLineWin] = useState<LineWin>('empate');
   const [stopButton, setStopButton] = useState(false);
   const [gameStatus, setGameStatus] = useState<TypeCardStatus>('normal');
+  const [turn, setTurn] = useState<{
+    player: 'player1' | 'player2';
+    nome: string;
+  }>();
 
   const [lineCard, setLineCard] = useState<LineWin>();
 
@@ -144,6 +149,13 @@ export const Game: React.FC = () => {
         setGameStatus('normal');
         setStopButton(false);
       }
+
+      const { anotations } = result;
+      setTurn(
+        anotations.jogadorInit === anotations.creator.id
+          ? { nome: anotations.creator.user, player: 'player1' }
+          : { nome: anotations.quest.user, player: 'player2' }
+      );
 
       const { creator, quest } = result.anotations;
       const { winner } = result.anotations;
@@ -477,6 +489,9 @@ export const Game: React.FC = () => {
               Jogar Novamente
             </ButtonComponent>
           </ContainerClicks>
+          <BoxTurn className="vez" turn={turn?.player}>
+            Sua vez: <strong>{turn?.nome}</strong>
+          </BoxTurn>
           {awaitPlayer ? (
             <ContainerAwait>
               <img src={awaitImage} alt="Esperando por jogador" />
