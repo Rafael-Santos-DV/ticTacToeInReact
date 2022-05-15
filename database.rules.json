@@ -1,0 +1,9 @@
+{
+  "rules": {
+    "gameRooms": {
+       ".read": true,
+      ".write": "auth != null",
+        
+    }
+  }
+}
