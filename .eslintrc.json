@@ -7,7 +7,7 @@
     "plugin:react/recommended",
     "airbnb",
     "plugin:@typescript-eslint/recommended",
-    "prettier/prettier",
+    
     "plugin:prettier/recommended"
   ],
   "settings": {
