@@ -279,6 +279,17 @@ export const Playes = styled.button<{ user: 'creator' | 'quest' }>`
 export const ContainerAwait = styled.div`
   margin: 0 auto;
   padding: 0 20px;
+
+  img {
+    width: 399px;
+  }
+
+  @media only screen and (max-width: 768px) {
+    img {
+      width: 100%;
+      max-width: 399px;
+    }
+  }
 `;
 
 type FrameLine = {
