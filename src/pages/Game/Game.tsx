@@ -183,6 +183,13 @@ export const Game: React.FC = () => {
         }
       }
 
+      if (
+        anotations.winner === 'none' &&
+        quest.plays.length + creator.plays.length === 9
+      ) {
+        setGameStatus('draw');
+      }
+
       setComponent(true);
       setData(result);
       setLineCard(result.anotations.line);
