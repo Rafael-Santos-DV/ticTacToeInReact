@@ -8,6 +8,8 @@ export const ContainerGamer = styled.div`
   flex-direction: column;
   margin: 0 auto;
   row-gap: 20px;
+
+  padding: 0 15px;
 `;
 
 export const ContainerScore = styled.header`
@@ -17,7 +19,46 @@ export const ContainerScore = styled.header`
   border-radius: 20px;
   justify-content: space-evenly;
   margin-top: 25px;
-  /* column-gap: 20px; */
+
+  @media only screen and (max-width: 768px) {
+    div.player1,
+    div.player2 {
+      span {
+        font-size: 10px;
+      }
+
+      div {
+        column-gap: 5px;
+
+        img,
+        div.nulo {
+          width: 20px;
+          height: 20px;
+        }
+
+        strong {
+          font-size: 2.3vw;
+        }
+
+        span.match {
+          font-size: 3vw;
+        }
+      }
+    }
+    div.score {
+      strong {
+        font-size: 5vw;
+      }
+
+      div {
+        column-gap: 6px;
+        span.wins,
+        span {
+          font-size: 2.4vw;
+        }
+      }
+    }
+  }
 `;
 
 export const Score = styled.div`
@@ -54,6 +95,19 @@ export const Score = styled.div`
     text-shadow: 0px 0px 2px ${Colors.backgroundMaster};
     letter-spacing: 2px;
   }
+
+  @media only screen and (max-width: 768px) {
+    div {
+      column-gap: 12px;
+      span,
+      span.wins {
+        font-size: 13px;
+      }
+    }
+    strong {
+      font-size: 25px;
+    }
+  }
 `;
 
 export const ContainerClicks = styled.div`
@@ -61,6 +115,8 @@ export const ContainerClicks = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-bottom: 34px;
+
+  column-gap: 5px;
 
   button.down-room {
     background-color: #ff0000;
@@ -84,11 +140,41 @@ export const ContainerClicks = styled.div`
         padding-left: 5px;
       }
     }
+
+    @media only screen and (max-width: 768px) {
+      align-items: center;
+      gap: 5px;
+
+      img {
+        width: 15px;
+      }
+
+      div {
+        font-size: 14px;
+        span {
+          font-size: 4px;
+        }
+      }
+    }
   }
 
   button.game-again {
     background-color: ${Colors.green};
     padding: 5px 0;
+  }
+
+  @media only screen and (max-width: 768px) {
+    button.down-room,
+    button.copy,
+    button.game-again {
+      font-size: 2vw;
+    }
+
+    button.copy {
+      div {
+        font-size: 2vw;
+      }
+    }
   }
 `;
 
@@ -140,6 +226,11 @@ export const CardGame = styled.div<TypeCardStatus>`
         color: #fa2a05;
       }
     `}
+
+  @media only screen and (max-width: 768px) {
+    width: 100%;
+    max-width: 399px;
+  }
 `;
 
 export const ContainerFrameGreen = styled.div`
@@ -392,5 +483,12 @@ export const BoxTurn = styled.div<{ turn?: 'player1' | 'player2' }>`
     color: ${(props) => (props.turn === 'player1' ? Colors.green : '#ff0000')};
     letter-spacing: 1px;
     font-size: 1.2rem;
+  }
+
+  @media only screen and (max-width: 768px) {
+    font-size: 2vw;
+    strong {
+      font-size: 2vw;
+    }
   }
 `;

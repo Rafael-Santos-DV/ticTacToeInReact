@@ -6,6 +6,7 @@ type TypeBoxUser = {
   src?: string;
   name?: string;
   match?: 'X' | 'O';
+  className?: string;
 };
 
 export const BoxUser: React.FC<TypeBoxUser> = ({
@@ -13,11 +14,12 @@ export const BoxUser: React.FC<TypeBoxUser> = ({
   src,
   name,
   match,
+  className,
 }) => (
-  <BoxUserComponent>
+  <BoxUserComponent className={className}>
     <span>Player: {player}</span>
     <div>
-      {src?.trim() ? <Img src={src} alt={name} /> : <div />}
+      {src?.trim() ? <Img src={src} alt={name} /> : <div className="nulo" />}
       <strong className={`${player === 1 ? 'creator' : 'quest'}`}>
         {name || 'Nenhum jogador'}
       </strong>

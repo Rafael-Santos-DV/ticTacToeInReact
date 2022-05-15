@@ -452,9 +452,10 @@ export const Game: React.FC = () => {
               name={data?.anotations.creator.user}
               match="X"
               player={1}
+              className="player1"
             />
 
-            <Score>
+            <Score className="score">
               <div>
                 <span>{data?.anotations.creator.wins}</span>
                 <span className="wins">Vitórias</span>
@@ -468,6 +469,7 @@ export const Game: React.FC = () => {
               name={data?.anotations.quest.user}
               match="O"
               player={2}
+              className="player2"
             />
           </ContainerScore>
 
