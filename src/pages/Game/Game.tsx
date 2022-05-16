@@ -167,6 +167,11 @@ export const Game: React.FC = () => {
       if (!user) {
         const response = await handleCacheSingInWithGoogle();
 
+        if (!response.user) {
+          navigate('/');
+          return;
+        }
+
         if (response?.id !== creator.id && response?.id !== quest.id) {
           navigate('/');
           return;
