@@ -1,7 +1,7 @@
 # `TicTacToe in React and Firebase`
 
 <p align="center">
-  <img src="/src/assets/image-old.svg" alt="Jogo da velha" width="150px" />
+  <img src="/src/assets/image-old.svg" alt="Jogo da velha" width="110px" />
 </p>
 
 <p>
